@@ -10,4 +10,4 @@ services:
       MYSQL_ROOT_PASSWORD: abcd1234*
     volumes:
       - ./data/mysql/data:/var/lib/mysql
-      - ./data/mysql/config/my.cnf:/etc/mysql/mysql.conf.d/my.cnf
+      - ./data/mysql/config/my.cnf:/etc/mysql/my.cnf

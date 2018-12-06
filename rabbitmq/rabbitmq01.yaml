@@ -1,0 +1,25 @@
+version: "2"
+services:
+  master:
+    image: rabbitmq:3.6-management
+    container_name: rmqha_node0
+    restart: always
+    mem_limit: 256m
+    hostname: rmqha_node0
+  #  ports:
+  #    - "4369:4369"
+  #    - "15672:15672"
+  #    - "15671:15671"
+  #    - "5672:5672"
+  #    - "5671:5671"
+    env_file:
+      - ./parameters.env
+    environment:
+      - CONTAINER_NAME=rmqha_node0
+      - RABBITMQ_HOSTNAME=rmqha_node0
+      - RABBITMQ_NODENAME=rabbit
+    extra_hosts:
+      #- "rmqha_node0:192.168.8.244"
+      - "rmqha_node1:192.168.8.245"
+      - "rmqha_node2:192.168.8.246"
+    network_mode: "host"

@@ -1,0 +1,12 @@
+version: "2"
+services:
+  haproxy:
+    image: haproxy:1.8
+    restart: always
+    mem_limit: 256m
+    hostname: ha_proxy
+    ports:
+      - "55672:5672"
+      - "1080:1080"
+    volumes:
+      - "./config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"

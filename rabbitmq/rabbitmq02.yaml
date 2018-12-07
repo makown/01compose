@@ -1,10 +1,10 @@
 version: "2"
 services:
   slave1:
-    image: rabbitmq:3.6-management
+    image: rabbitmq:3.7-management
     container_name: rmqha_node1
     restart: always
-    mem_limit: 256m
+    mem_limit: 1024m
     hostname: rmqha_node1
     volumes:
       - "./volumes/rmqha_slave/cluster_entrypoint.sh:/usr/local/bin/cluster_entrypoint.sh"
@@ -17,14 +17,7 @@ services:
       - RABBITMQ_HOSTNAME=rmqha_node1
       - RABBITMQ_NODENAME=rabbit
       - RMQHA_RAM_NODE=true
- #   ports:
- #     - "4369:4369"
- #     - "15672:15672"
- #     - "15671:15671"
- #     - "5672:5672"
- #     - "5671:5671"
     extra_hosts:
-      - "rmqha_node0:192.168.8.244"
-     # - "rmqha_node1:192.168.8.245"
-      - "rmqha_node2:192.168.8.246"
+      - "rmqha_node0:172.17.0.201"
+      - "rmqha_node2:172.17.0.203"
     network_mode: "host"

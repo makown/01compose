@@ -1,0 +1,30 @@
+version: '3'
+services:
+  zabbix-agent:
+    image: zabbix/zabbix-agent:centos-4.0-latest
+    stop_grace_period: 5s
+    #hostname: zabbix-agent
+    user: root
+    privileged: true
+    pid: "host"
+    ports:
+     - "10050:10050"
+    #network_mode: "host"
+    #extra_hosts:
+    #  - "zabbix-server:192.16.1.53"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./zbx_env/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro
+      - ./zbx_env/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro
+      - ./zbx_env/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
+      - ./zbx_env/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+    environment:
+      - ZBX_SERVER_HOST=192.168.1.53
+     # - ZBX_ACTIVESERVERS=zabbix-server
+      - ZBX_HOSTNAME=server02
+      - ZBX_ACTIVE_ALLOW=true
+      - ZBX_METADATA=Linux
+      - ZBX_REFRESHACTIVECHECKS=120
+      - ZBX_TIMEOUT=30
+      - ZBX_UNSAFEUSERPARAMETERS=1

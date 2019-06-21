@@ -106,6 +106,15 @@ services:
     networks:
       - elk
 
+  redis:
+    image: redis
+    command: redis-server --requirepass 2019divi
+    ports:
+      - 6379:6379
+    restart: always
+    networks:
+      - elk
+
 networks:
   elk:
     driver: bridge

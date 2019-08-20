@@ -20,9 +20,9 @@ services:
       - ./zbx_env/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
       - ./zbx_env/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
     environment:
-      - ZBX_SERVER_HOST=192.168.1.53
-     # - ZBX_ACTIVESERVERS=zabbix-server
-      - ZBX_HOSTNAME=server02
+      - ZBX_SERVER_HOST=0.0.0.0/0
+      - ZBX_ACTIVESERVERS=172.17.4.8
+      - ZBX_HOSTNAME=Zabbix server
       - ZBX_ACTIVE_ALLOW=true
       - ZBX_METADATA=Linux
       - ZBX_REFRESHACTIVECHECKS=120

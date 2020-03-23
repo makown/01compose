@@ -95,10 +95,12 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ./logstash/config/logstash.yml:/usr/share/logstash/pipeline/logstash.yml
+      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/logs:/usr/share/logstash/logs:rw
     ports:
       - 5044:5044
+      - 5514:5514
+      - 5514:5514/udp
     networks:
       - elk
 

@@ -1,0 +1,109 @@
+version: '2.2'
+services:
+  es01:
+    image:  registry.cn-shenzhen.aliyuncs.com/kye/elasticsearch:7.9.2
+    container_name: es01
+    hostname: es01
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - node.name=es01
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1900m -Xmx1900m"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./es01/data:/usr/share/elasticsearch/data:rw
+      #- ./es01/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./es01/logs:/usr/share/elasticsearch/logs:rw
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+  
+  es02:
+    image:  registry.cn-shenzhen.aliyuncs.com/kye/elasticsearch:7.9.2
+    container_name: es02
+    hostname: es02
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - node.name=es02
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms900m -Xmx900m"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./es02/data:/usr/share/elasticsearch/data:rw
+      #- ./es02/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./es02/logs:/usr/share/elasticsearch/logs:rw
+    networks:
+      - elk
+
+  es03:
+    image:  registry.cn-shenzhen.aliyuncs.com/kye/elasticsearch:7.9.2
+    container_name: es03
+    hostname: es03
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - node.name=es03
+      - discovery.seed_hosts=es01,es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms900m -Xmx900m"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./es03/data:/usr/share/elasticsearch/data:rw
+      #- ./es03/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./es03/logs:/usr/share/elasticsearch/logs:rw
+    networks:
+      - elk
+
+  kibana:
+    image: registry.cn-shenzhen.aliyuncs.com/kye/kibana:7.9.2
+    environment:
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+  logstash:
+    image: registry.cn-shenzhen.aliyuncs.com/kye/logstash:7.9.2
+    #image: logstash:v1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/logs:/usr/share/logstash/logs:rw
+    ports:
+      - 5044:5044
+      - 5514:5514
+      - 5514:5514/udp
+    networks:
+      - elk
+
+networks:
+  elk:
+    driver: bridge

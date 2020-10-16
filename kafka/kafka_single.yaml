@@ -1,0 +1,61 @@
+version: '2'
+services:
+  zoo1:
+    image: wurstmeister/zookeeper
+    restart: always
+    hostname: zoo1
+    container_name: zoo1
+    ports:
+      - 2181:2181
+    volumes:
+      - ./zoo1/data:/data
+      - ./zoo1/logs:/datalog
+  
+  kafka1:
+    image: wurstmeister/kafka  # 镜像
+    restart: always
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+    - 9092:9092
+    - 9999:9999
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.61:9092 # 暴露在外的地址
+      KAFKA_ADVERTISED_HOST_NAME: kafka1 # 
+      KAFKA_HOST_NAME: kafka1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
+      KAFKA_ADVERTISED_PORT: 9092 # 暴露在外的端口
+      KAFKA_BROKER_ID: 0 # 
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      JMX_PORT: 9999 # jmx
+    volumes:
+    - /etc/localtime:/etc/localtime
+    - "./kafka1/logs:/kafka"
+    links:
+    - zoo1
+
+  kafka-manager:
+    image: hlebalbau/kafka-manager
+    restart: always
+    container_name: kafka-manager
+    hostname: kafka-manager
+    ports:
+    - 9000:9000
+    links:
+    - kafka1
+    - zoo1
+
+    environment:
+      ZK_HOSTS: zoo1:2181
+      KAFKA_BROKERS: kafka1:9092
+      APPLICATION_SECRET: letmein
+      KAFKA_MANAGER_AUTH_ENABLED: "true" # 开启验证
+      KAFKA_MANAGER_USERNAME: "admin" # 用户名
+      KAFKA_MANAGER_PASSWORD: "admin" # 密码
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+
+networks:
+  default:
+    external:
+      name: kafka_network
+#docker network create --driver bridge  kafka_network
